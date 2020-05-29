@@ -20,53 +20,29 @@
 
     <ScrollView>
         <Grid>
-            <StackLayout
-                Padding="24"
-                Spacing="12">
-                <Frame
-                    CornerRadius="50"
-                    Padding="0"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    HeightRequest="100"
-                    WidthRequest="100"
-                    HasShadow="False"
-                    BackgroundColor="#33f069"
-                    BorderColor="Gray">
-                    <Label
-                     HorizontalTextAlignment="Center"
-                        VerticalTextAlignment="Center">
+            <StackLayout Style="{StaticResource stackLayout}">
+                <Frame Style="{StaticResource frameStyling}">
+                    <Label Style="{StaticResource centeredLabel}">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span
-                                    Text="56"
-                                    FontAttributes="Bold"
-                                    TextColor="Black"
-                                    FontSize="32"/>
+                                <Span Style="{StaticResource rank}"
+                                    Text="56" />
                                 <Span
                                     Text="{x:Static x:Environment.NewLine}"/>
-                                <Span
-                                    Text="CAQI"
-                                    FontSize="12"
-                                    TextColor="DarkSlateGray"/>
+                                <Span Style="{StaticResource city}"
+                                    Text="CAQI" />
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
                 </Frame>
                 <Label
                     Text="Świetna jakość!"
-                    FontSize="20"
-                    TextColor="Black"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"/>
+                    Style="{StaticResource centeredLabel}"/>
                 <Label
                     Text="Możesz bezpiecznie wyjść z domu bez swojej maski anty-smogowej i nie bać się o swoje zdrowie."
                  />
 
-                <BoxView
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    BackgroundColor="LightGray"/>
+                <BoxView Style="{StaticResource breakBox}"/>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -76,35 +52,26 @@
                     </Grid.ColumnDefinitions>
                     <controls:ContentWithHeader Title="PM 2,5">
                         <controls:ContentWithHeader.ControlContent>
-                            <Label>
+                            <Label Style="{StaticResource centeredLabel}">
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span
                                             Text="34"
-                                            TextColor="Black"
-                                            FontSize="20"/>
+                                            />
                                         <Span
                                             Text=" mg/m3 "
-                                            TextColor="Black"
                                             FontSize="14"/>
                                         <Span
                                             Text="(137%)"
-                                            TextColor="Black"
-                                            FontSize="20"/>
+                                            />
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
                         </controls:ContentWithHeader.ControlContent>
                     </controls:ContentWithHeader>
-                
-                    <BoxView
-                        Grid.Column="1"
-                        VerticalOptions="Fill"
-                        HorizontalOptions="Center"
-                        WidthRequest="1"
-                        BackgroundColor="LightGray"/>
-                    
-                    
+
+                    <BoxView Style="{StaticResource boxView}"/>
+
                     <controls:ContentWithHeader
                         Title="PM 10"
                         Grid.Column="2">
@@ -131,11 +98,7 @@
                     </controls:ContentWithHeader>
                 </Grid>
 
-                
-                <BoxView
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    BackgroundColor="LightGray"/>
+                <BoxView Style="{StaticResource breakBox}"/>
                 <controls:ContentWithHeader Title="Wilgotność">
                     <controls:ContentWithHeader.ControlContent>
                         <StackLayout>
@@ -143,48 +106,27 @@
                                 Text="95%"
                                 FontSize="20"
                                 TextColor="Black" />
-                            <Slider
-                                Value="0.95"
-                                MaximumTrackColor="Gray"
-                                MinimumTrackColor="CornflowerBlue"
-                                ThumbColor="CornflowerBlue"/>
+                            <Slider Style="{StaticResource slider}"
+                                Value="0.95"/>
                         </StackLayout>
                     </controls:ContentWithHeader.ControlContent>
                 </controls:ContentWithHeader>
-                
-                <BoxView
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    BackgroundColor="LightGray"/>
+
+                <BoxView Style="{StaticResource breakBox}"/>
                 <controls:ContentWithHeader Title="Ciśnienie">
                     <controls:ContentWithHeader.ControlContent>
                         <StackLayout>
                             <Label
-                                Text="1026 hPa"
-                                FontSize="20"
-                                TextColor="Black" />
+                                Text="1326 hPa"
+                                Style="{StaticResource mainText}"/>
                             <!-- Set Maximum before Minimum in Slider -->
-                            <Slider
-                                Maximum="1100"
-                                Minimum="900"
-                                Value="1026"
-                                MaximumTrackColor="Gray"
-                                MinimumTrackColor="CornflowerBlue"
-                                ThumbColor="CornflowerBlue"/>
+                            <Slider Style="{StaticResource slider}" Value="926" Maximum="1100" Minimum="900"/>
                         </StackLayout>
                     </controls:ContentWithHeader.ControlContent>
                 </controls:ContentWithHeader>
             </StackLayout>
 
-            <ImageButton
-                Padding="12,24"
-                HorizontalOptions="End"
-                VerticalOptions="Start"
-                WidthRequest="48"
-                HeightRequest="72"
-                BackgroundColor="Transparent"
-                Source="baseline_help_outline_black_24.png"
-                Clicked="Help_Clicked"/>
+            <ImageButton Style="{StaticResource helpImage}" Clicked="Help_Clicked"/>
         </Grid>
     </ScrollView>
 
