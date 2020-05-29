@@ -7,6 +7,7 @@
              x:Class="AirMonitor.App">
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Zadanie 1.4 -->
             <Color x:Key="App_InfoColor">#33f069</Color>
             
             <!-- Zadanie 1.2 -->
@@ -19,6 +20,7 @@
                 <Setter Property="WidthRequest" Value="100"></Setter>
                 <Setter Property="HasShadow" Value="False"></Setter>
                 <Setter Property="BorderColor" Value="Red"></Setter>
+                <!-- Zadanie 1.4 -->
                 <Setter Property="BackgroundColor" Value="{StaticResource App_InfoColor}"></Setter>
             </Style>
             <Style x:Key="centeredLabel" TargetType="Label">
