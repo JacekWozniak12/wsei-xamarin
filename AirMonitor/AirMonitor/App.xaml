@@ -6,7 +6,6 @@
              mc:Ignorable="d"
              x:Class="AirMonitor.App">
     <Application.Resources>
-        <!-- Zadanie 1.5 -->
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Views/Resources/styles.xaml"></ResourceDictionary>
