@@ -44,15 +44,15 @@
                     </Label>
                 </Frame>
                 <Label
-                    Text="Świetna jakość!"
+                    Text="Dobra jakość!"
                     FontSize="20"
                     TextColor="Black"
                     FontAttributes="Bold"
                     HorizontalTextAlignment="Center"/>
                 <Label
                     Text="Możesz bezpiecznie wyjść z domu bez swojej maski anty-smogowej i nie bać się o swoje zdrowie."
-                    FontSize="14"
-                    TextColor="Black" />
+                    FontSize="12"
+                    TextColor="Red" />
 
                 <BoxView
                     HeightRequest="1"
