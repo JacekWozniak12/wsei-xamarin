@@ -7,6 +7,16 @@
              x:Class="AirMonitor.Views.MainPage"
              xmlns:controls="clr-namespace:AirMonitor.Views.Controls"
              BackgroundColor="#f9f9f9">
+    
+    <!-- Zadanie 1.1 -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label">
+                <Setter Property="FontSize" Value="14"></Setter>
+                <Setter Property="TextColor" Value="Black"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
         <Grid>
@@ -51,8 +61,7 @@
                     HorizontalTextAlignment="Center"/>
                 <Label
                     Text="Możesz bezpiecznie wyjść z domu bez swojej maski anty-smogowej i nie bać się o swoje zdrowie."
-                    FontSize="14"
-                    TextColor="Black" />
+                 />
 
                 <BoxView
                     HeightRequest="1"
