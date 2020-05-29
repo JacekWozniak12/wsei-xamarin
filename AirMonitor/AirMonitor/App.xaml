@@ -6,80 +6,12 @@
              mc:Ignorable="d"
              x:Class="AirMonitor.App">
     <Application.Resources>
+        <!-- Zadanie 1.5 -->
         <ResourceDictionary>
-            <!-- Zadanie 1.4 -->
-            <Color x:Key="App_InfoColor">#33f069</Color>
-            
-            <!-- Zadanie 1.2 -->
-            <Style x:Key="frameStyling" TargetType="Frame">
-                <Setter Property="CornerRadius" Value="50"></Setter>
-                <Setter Property="Padding" Value="0"></Setter>
-                <Setter Property="HorizontalOptions" Value="Center"></Setter>
-                <Setter Property="VerticalOptions" Value="Center"></Setter>
-                <Setter Property="HeightRequest" Value="100"></Setter>
-                <Setter Property="WidthRequest" Value="100"></Setter>
-                <Setter Property="HasShadow" Value="False"></Setter>
-                <Setter Property="BorderColor" Value="Red"></Setter>
-                <!-- Zadanie 1.4 -->
-                <Setter Property="BackgroundColor" Value="{StaticResource App_InfoColor}"></Setter>
-            </Style>
-            <Style x:Key="centeredLabel" TargetType="Label">
-                <Setter Property="HorizontalOptions" Value="Center"></Setter>
-                <Setter Property="VerticalOptions" Value="Center"></Setter>
-            </Style>
-            <Style x:Key="helpImage" TargetType="ImageButton">
-                <Setter Property="Padding" Value="12,24"></Setter>
-                <Setter Property="HorizontalOptions" Value="End"></Setter>
-                <Setter Property="VerticalOptions" Value="Start"></Setter>
-                <Setter Property="WidthRequest" Value="48"></Setter>
-                <Setter Property="HeightRequest" Value="72"></Setter>
-                <Setter Property="BackgroundColor" Value="Transparent"></Setter>
-                <Setter Property="Source" Value="baseline_help_outline_black_24.png"></Setter>
-            </Style>
-            <Style x:Key="sliderLabel" TargetType="Label">
-                <Setter Property="FontSize" Value="20"></Setter>
-                <Setter Property="TextColor" Value="Black"></Setter>
-            </Style>
-            <Style x:Key="slider" TargetType="Slider">
-                <Setter Property="MaximumTrackColor" Value="Gray"></Setter>
-                <Setter Property="MinimumTrackColor" Value="CornflowerBlue"></Setter>
-                <Setter Property="ThumbColor" Value="CornflowerBlue"></Setter>
-            </Style>
-            <Style x:Key="stackLayout" TargetType="StackLayout">
-                <Setter Property="Padding" Value="24"></Setter>
-                <Setter Property="Spacing" Value="12"></Setter>
-            </Style>
-            <Style x:Key="mainText" TargetType="Label">
-                <Setter Property="FontSize" Value="20"></Setter>
-                <Setter Property="TextColor" Value="Black"></Setter>
-            </Style>
-            <Style x:Key="boxView" TargetType="BoxView">
-                <Setter Property="Grid.Column" Value="1"></Setter>
-                <Setter Property="VerticalOptions" Value="Fill"></Setter>
-                <Setter Property="HorizontalOptions" Value="Center"></Setter>
-                <Setter Property="WidthRequest" Value="1"></Setter>
-                <Setter Property="BackgroundColor" Value="LightGray"></Setter>
-            </Style>
-
-            <Style x:Key="breakBox" TargetType="BoxView">
-                <Setter Property="HorizontalOptions" Value="Fill"></Setter>
-                <Setter Property="HeightRequest" Value="1"></Setter>
-                <Setter Property="BackgroundColor" Value="LightGray"></Setter>
-            </Style>
-            
-            <Style x:Key="rank" TargetType="Span">
-                <Setter Property="FontSize" Value="32"></Setter>
-                <Setter Property="TextColor" Value="Black"></Setter>
-                <Setter Property="FontAttributes" Value="Bold"></Setter>
-            </Style>
-            <!-- Zadanie 1.3 -->
-            <Style x:Key="city" TargetType="Span">
-                <Setter Property="FontSize" Value="12"></Setter>
-                <Setter Property="TextColor" Value="Blue"></Setter>
-            </Style>
-            
-            
-            
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Views/Resources/styles.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Views/Resources/colors.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
