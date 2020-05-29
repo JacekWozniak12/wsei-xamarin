@@ -16,5 +16,11 @@ namespace AirMonitor.Views
         {
             InitializeComponent();
         }
+
+        private async void LeadToDetailsPage(object sender, EventArgs e)
+        {
+            var detailsPage = new DetailsPage();
+            await Navigation.PushAsync(detailsPage);
+        }
     }
 }

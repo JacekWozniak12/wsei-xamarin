@@ -7,6 +7,8 @@
              x:Class="AirMonitor.Views.HomePage">
     <ContentPage.Content>
         <StackLayout>
+            <Button Clicked="LeadToDetailsPage" Text="Details Page"></Button>
+            
             <Label Text="Welcome to Xamarin.Forms!"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
