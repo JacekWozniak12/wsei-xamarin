@@ -20,11 +20,13 @@ namespace AirMonitor
         {
             var TP = new TabbedPage();
             TP.Title = "Tabbed Page";
-            TP.Children.Add(new SettingsPage{ 
+            TP.Children.Add(new NavigationPage(new SettingsPage())
+            { 
                 Title = "Settings", 
                 IconImageSource = "settings.png"
             });
-            TP.Children.Add(new HomePage { 
+            TP.Children.Add(new NavigationPage(new HomePage()) 
+            { 
                 Title = "Home",
                 IconImageSource = "home.png"
             });
