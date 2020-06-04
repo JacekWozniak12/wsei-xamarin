@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AirMonitor.Views.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -16,11 +17,16 @@ namespace AirMonitor.Views
         public DetailsPage()
         {
             InitializeComponent();
+            BindingContext = new DetailsViewModel();
         }
 
         private void Help_Clicked(object sender, EventArgs e)
         {
             DisplayAlert("Co to jest tex?", "Lorem ipsum.", "Zamknij");
         }
+    }
+
+    internal class RoutedPropertyChangedEventArgs<T>
+    {
     }
 }

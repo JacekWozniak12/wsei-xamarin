@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="AirMonitor.Views.DetailsPage"
-             xmlns:controls="clr-namespace:AirMonitor.Views.Controls"
+             xmlns:controls="clr-namespace:AirMonitor.Views.Controls" xmlns:local="clr-namespace:AirMonitor.Views.ViewModels"
              BackgroundColor="#f9f9f9">
     
     <!-- Zadanie 1.1 -->
@@ -15,9 +15,11 @@
                 <Setter Property="FontSize" Value="14"></Setter>
                 <Setter Property="TextColor" Value="Black"></Setter>
             </Style>
+
+            <local:IntTextConverter x:Key="IntText"/>
+            <local:RangePercentConverter x:Key="RangePercent"/>
         </ResourceDictionary>
     </ContentPage.Resources>
-
     <ScrollView>
         <Grid>
             <StackLayout Style="{StaticResource stackLayout}">
@@ -26,11 +28,15 @@
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span Style="{StaticResource rank}"
-                                    Text="56" />
-                                <Span
-                                    Text="{x:Static x:Environment.NewLine}"/>
-                                <Span Style="{StaticResource city}"
-                                    Text="CAQI" />
+                                    Text="{Binding Mark}" >
+                                    <Span.BindingContext>
+                                        <!-- Zadanie 5 -->
+                                        <local:DetailsViewModel />
+                                    </Span.BindingContext>
+                                </Span>
+                                <Span Text="{x:Static x:Environment.NewLine}"/>
+                                <Span Style="{StaticResource city}" Text="{Binding CAQI}">
+                                </Span>
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
@@ -38,9 +44,7 @@
                 <Label
                     Text="Świetna jakość!"
                     Style="{StaticResource centeredLabel}"/>
-                <Label
-                    Text="Możesz bezpiecznie wyjść z domu bez swojej maski anty-smogowej i nie bać się o swoje zdrowie."
-                 />
+                <Label Text="Możesz bezpiecznie wyjść z domu bez swojej maski anty-smogowej i nie bać się o swoje zdrowie."/>
 
                 <BoxView Style="{StaticResource breakBox}"/>
 
@@ -60,10 +64,15 @@
                                             />
                                         <Span
                                             Text=" mg/m3 "
-                                            FontSize="14"/>
+                                            >
+
+                                        </Span>
+
                                         <Span
                                             Text="(137%)"
-                                            />
+                                            >
+
+                                        </Span>
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
@@ -103,31 +112,33 @@
                     <controls:ContentWithHeader.ControlContent>
                         <StackLayout>
                             <Label
-                                Text="95%"
-                                FontSize="20"
-                                TextColor="Black" />
-                            <Slider Style="{StaticResource slider}"
-                                Value="0.95"/>
+                                Text="{Binding Humility, Converter={StaticResource RangePercent}}"
+                                Style="{StaticResource mainText}"/>
+                            <Slider Style="{StaticResource slider}" 
+                                    Value="{Binding Humility}" >
+                            </Slider>
                         </StackLayout>
                     </controls:ContentWithHeader.ControlContent>
                 </controls:ContentWithHeader>
 
                 <BoxView Style="{StaticResource breakBox}"/>
+                
                 <controls:ContentWithHeader Title="Ciśnienie">
                     <controls:ContentWithHeader.ControlContent>
                         <StackLayout>
                             <Label
-                                Text="1326 hPa"
+                                Text="{Binding Pressure, Converter={StaticResource IntText}}"
                                 Style="{StaticResource mainText}"/>
                             <!-- Set Maximum before Minimum in Slider -->
-                            <Slider Style="{StaticResource slider}" Value="926" Maximum="1100" Minimum="900"/>
+                            <Slider Style="{StaticResource slider}"
+                                    Value="{Binding Pressure}"
+                                    Maximum="1100" Minimum="900" >
+                            </Slider>
                         </StackLayout>
                     </controls:ContentWithHeader.ControlContent>
                 </controls:ContentWithHeader>
             </StackLayout>
-
             <ImageButton Style="{StaticResource helpImage}" Clicked="Help_Clicked"/>
         </Grid>
     </ScrollView>
-
 </ContentPage>
