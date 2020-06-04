@@ -21,10 +21,12 @@ namespace AirMonitor
             var TP = new TabbedPage();
             TP.Title = "Tabbed Page";
             TP.Children.Add(new SettingsPage{ 
-                Title = "Settings" 
+                Title = "Settings", 
+                IconImageSource = "settings.png"
             });
             TP.Children.Add(new HomePage { 
-                Title = "Home" 
+                Title = "Home",
+                IconImageSource = "home.png"
             });
             TP.On<Android>().SetToolbarPlacement(ToolbarPlacement.Bottom);
             return TP;
