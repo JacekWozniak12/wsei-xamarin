@@ -27,7 +27,7 @@
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span
-                                    Text="{Binding CaqiValue}"
+                                    Text="{Binding CaqiValue}" 
                                     Style="{StaticResource CaqiValueSpanStyle}"/>
                                 <Span
                                     Text="{x:Static x:Environment.NewLine}"/>

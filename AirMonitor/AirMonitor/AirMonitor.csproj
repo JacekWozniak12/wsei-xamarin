@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Xamarin.Forms" Version="4.3.0.908675" />
     <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
   </ItemGroup>
@@ -18,7 +19,6 @@
     <Folder Include="Views\" />
     <Folder Include="Views\Controls\" />
     <Folder Include="Styles\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="Converters\" />
   </ItemGroup>
   <ItemGroup>
@@ -26,5 +26,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Converters\StringFormatConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="conf\config.json" />
+    <None Remove="conf\secret.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="conf\config.json" />
+    <EmbeddedResource Include="conf\secret.json" />
   </ItemGroup>
 </Project>

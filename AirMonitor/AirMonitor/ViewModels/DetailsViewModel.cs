@@ -1,16 +1,50 @@
-﻿using System;
+﻿using AirMonitor.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace AirMonitor.ViewModels
 {
-    public class DetailsViewModel : INotifyPropertyChanged
+    public class DetailsViewModel : BaseViewModel, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public DetailsViewModel()
         {
+
+        }
+
+        private Measurements _item;
+        public Measurements Item
+        {
+            get => _item;
+            set
+            {
+                SetProperty(ref _item, value);
+
+                UpdateProperties();
+            }
+        }
+
+        private void UpdateProperties()
+        {
+            if (Item?.Current == null) return;
+            var current = Item?.Current;
+            var index = current.Indexes?.FirstOrDefault(c => c.Name == "AIRLY_CAQI");
+            var values = current.Values;
+            var standards = current.Standards;
+
+            CaqiValue = (int)Math.Round(index?.Value ?? 0);
+            CaqiTitle = index.Description;
+            CaqiDescription = index.Advice;
+            Pm25Value = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "PM25")?.Value ?? 0);
+            Pm10Value = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "PM10")?.Value ?? 0);
+            HumidityValue = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "HUMIDITY")?.Value ?? 0);
+            PressureValue = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "PRESSURE")?.Value ?? 0);
+            Pm25Percent = (int)Math.Round(standards?.FirstOrDefault(s => s.Pollutant == "PM25")?.Percent ?? 0);
+            Pm10Percent = (int)Math.Round(standards?.FirstOrDefault(s => s.Pollutant == "PM10")?.Percent ?? 0);
         }
 
         private int _caqiValue = 57;
@@ -18,15 +52,6 @@ namespace AirMonitor.ViewModels
         {
             get => _caqiValue;
             set => SetProperty(ref _caqiValue, value);
-            /* SetProperty is a helper function to shorten our code. This is equivalent of:
-             * set
-             * {
-             *  if (_caqiValue == value) return; // Don't reassign value and notify view if value didn't change
-             *
-             *  _caqiValue = value;
-             *  RaisePropertyChanged();
-             * }
-             */
         }
 
         private string _caqiTitle = "Świetna jakość!";
@@ -83,22 +108,6 @@ namespace AirMonitor.ViewModels
         {
             get => _pressureValue;
             set => SetProperty(ref _pressureValue, value);
-        }
-
-        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-
-            field = value;
-
-            RaisePropertyChanged(propertyName);
-
-            return true;
         }
     }
 }

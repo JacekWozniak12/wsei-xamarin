@@ -12,33 +12,33 @@
 
 ### 1. Zarejestruj się do api Airly - Adres: https://developer.airly.eu
 
-- Załóż konto i zapoznaj się z sekcją Concepts w dokumentacji.
+- Załóż konto i zapoznaj się z sekcją **Concepts** w dokumentacji.
 
 ### 2. Pobierz swoją lokalizację z telefonu.
 
-- Wykorzystaj element Geolocation biblioteki Xamarin.Essentials (jest domyślnie zainstalowana w nowym projekcie Xamarin.Forms przez nuget) do pobrania własnej lokalizacji - będzie potrzebna do zapyta w Airly API.
+- Wykorzystaj element **Geolocation** biblioteki Xamarin.Essentials (jest domyślnie zainstalowana w nowym projekcie Xamarin.Forms przez nuget) do pobrania własnej lokalizacji - będzie potrzebna do zapyta w Airly API.
 
 ### 3. Stwórz zapytania do API Airly.
 
-- UWAGA: Api Airly ma limit 100 requestów na dzien. Pamiętaj, żeby nie przekroczyć limitu albo będzie ci trudniej dokonczyć ćwiczenie.
+- **UWAGA: Api Airly ma limit 100 requestów** na dzien. Pamiętaj, żeby nie przekroczyć limitu albo będzie ci trudniej dokonczyć ćwiczenie.
 
-- Wykorzystaj klasę HttpClient do obsługi requestów do API.
+- Wykorzystaj klasę **HttpClient** do obsługi requestów do API.
 
-- Dodaj do instancji HttpClient niezbędne nagłówki (wymienione w dokumentacji).
+- Dodaj do instancji HttpClient niezbędne **nagłówki (wymienione w dokumentacji).**
 
-- Wykonaj zapytanie Get do endpointu: Installations -> Nearest - najlepiej utwórz limit zwracanych wyników na 1. Na razie więcej nie będzie potrzebne.
+- Wykonaj zapytanie **Get** do endpointu: **Installations -> Nearest** - najlepiej utwórz limit zwracanych wyników na 1. Na razie więcej nie będzie potrzebne.
 
-- Wyciągnij odpowiedź jako string. Na tej podstawie stwórz modele takie same jak zwrócone dane.
+- Wyciągnij **odpowiedź** jako **string**. Na tej podstawie stwórz modele takie same jak zwrócone dane.
 
-- Parsuj odpowiedź z HttpClient za pomocą biblioteki Newtonsoft.Json (pobierz ją z nugeta) na klasy, które stworzyłeś.
+- Parsuj odpowiedź z HttpClient za pomocą biblioteki **Newtonsoft.Json** (pobierz ją z nugeta) na klasy, które stworzyłeś.
 
 - Powtórz powyższe czynności dla innego endpointa z API: Measurements -> By ID - będziesz do niego potrzebował Id instalacji, które dostaniesz z pierwszego zapytania – najlepiej wykonać takie zapytania w pętli dla każdego id (w razie jak będziemy pobierać ich więcej).
 
-- Proponowane modele: Measurement, MeasurementItem, MeasurementValue, AirQualityIndex, AirQualityStandard, Installation, Address
+- Proponowane modele: **Measurement, MeasurementItem, MeasurementValue, AirQualityIndex, AirQualityStandard, Installation, Address**
 
-- Kontroluj ilość zapytan, która ci pozostała (wykorzystaj nagłówek X-RateLimit-Remaining-day - więcej w dokumentacji Airly).
+- Kontroluj ilość zapytan, która ci pozostała (wykorzystaj **nagłówek X-RateLimit-Remaining-day** - więcej w dokumentacji Airly).
 
-- Pamiętaj o obsłudze błędów przy robieniu zapytania, a także o sprawdzaniu zwróconego kodu http.
+- Pamiętaj o **obsłudze błędów** przy robieniu zapytania, a także o sprawdzaniu zwróconego kodu http.
 
 - Możesz użyć UriBuilder i HttpUtility.ParseQueryString do stworzenia adresu url do zapytania, żeby zachować porządek.
 
