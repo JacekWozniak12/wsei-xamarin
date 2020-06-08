@@ -2,6 +2,7 @@
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace AirMonitor.Models.Entities
@@ -22,9 +23,15 @@ namespace AirMonitor.Models.Entities
         public InstallationEntity(Installation installation)
         {
             Id = installation.Id;
-            Address = JsonConvert.SerializeObject(installation.Address);
-/*            Location = JsonConvert.SerializeObject(installation.Location);*/
-            Console.WriteLine("T3");
+            try
+            {
+                Address = JsonConvert.SerializeObject(installation.Address);
+                Location = JsonConvert.SerializeObject(installation.Location);
+            }
+            catch (JsonException e)
+            {
+                Trace.WriteLine(e);
+            }
         }
     }
 }

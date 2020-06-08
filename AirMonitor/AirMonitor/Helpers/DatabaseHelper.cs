@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 
 namespace AirMonitor
@@ -18,6 +20,8 @@ namespace AirMonitor
         string path;
 
         SQLiteConnection DB { get; set; }
+
+        public DateTime TillDateTime;
 
         public DatabaseHelper()
         {
@@ -39,9 +43,9 @@ namespace AirMonitor
                     SQLiteOpenFlags.ReadWrite |
                     SQLiteOpenFlags.Create |
                     SQLiteOpenFlags.FullMutex
-                    );
+                    );               
+                InitializeTables(); 
                 Console.WriteLine("-----DATABASE READY-----");
-                InitializeTables();
             }
             catch (SQLiteException e)
             {
@@ -50,8 +54,7 @@ namespace AirMonitor
         }
 
         private void InitializeTables()
-        {
-            Console.WriteLine("-----CREATING TABLES-----");
+        {            
             try
             {
                 DB.CreateTable<InstallationEntity>();
@@ -67,38 +70,93 @@ namespace AirMonitor
             }
         }
 
-        public void SaveInstallation(IEnumerable<Installation> installations)
+        public async Task SaveInstallation(IEnumerable<Installation> installations)
+        {
+            await new Task(
+            () => {
+                try
+                {
+                    DB.BeginTransaction();
+                    DB.DeleteAll<InstallationEntity>();
+                    var Entities = new List<InstallationEntity>();
+                    foreach (var e in installations)
+                    {
+                        Entities.Add(new InstallationEntity(e));
+                    }
+
+                    DB.InsertAll(Entities, false);
+                    Console.WriteLine(DB.Table<InstallationEntity>().Count());
+                }
+                catch (SQLiteException e)
+                {
+                    Trace.WriteLine(e);
+                    DB.Rollback();
+                }
+                DB.Commit();
+            });
+        }
+
+        public async Task<IEnumerable<Installation>> GetInstallations()
+        {
+            var List = new List<Installation>();
+            await new Task(
+            () =>
+            {
+                try
+                {
+                    DB.BeginTransaction();
+                    var InstallationTable = DB.Table<InstallationEntity>();
+
+                    foreach (var Entity in InstallationTable)
+                    {
+                        List.Add(new Installation(Entity));
+                    }
+
+                    DB.Commit();
+                }
+                catch (SQLiteException e)
+                {
+                    Trace.WriteLine(e);
+                    DB.Rollback();
+                }
+            }
+            );
+
+            return List;
+        }
+
+        public void SaveMeasurements(IEnumerable<Measurement> measurements)
         {
             DB.BeginTransaction();
             try
             {
-                DB.DeleteAll<InstallationEntity>();
-                var Entities = new List<InstallationEntity>();
-                foreach (var e in installations)
+                DB.DeleteAll<MeasurementItemEntity>();
+                DB.DeleteAll<MeasurementsEntity>();
+                DB.DeleteAll<MeasurementValue>();
+                DB.DeleteAll<AirQualityIndex>();
+                DB.DeleteAll<AirQualityStandard>();
+                
+                foreach (var e in measurements)
                 {
-                    Entities.Add(new InstallationEntity(e));
+                    DB.InsertAll(e.Current.Indexes, false);
+                    DB.InsertAll(e.Current.Values, false);
+                    DB.InsertAll(e.Current.Standards, false);
+                    var a = new MeasurementItemEntity(e.Current);
+                    DB.Insert(a);
+                    DB.Insert(new MeasurementsEntity(a.Id, int.Parse(e.Installation.Id)));
                 }
 
-                DB.InsertAll(Entities);
-                Console.WriteLine(DB.Table<InstallationEntity>().Count());
             }
             catch (SQLiteException e)
             {
                 Trace.WriteLine(e);
                 DB.Rollback();
             }
-            DB.Commit();
-        }
-
-        public void Insert<T>(SQLiteConnection connection, T insertable)
-        {
-
-        }
-
-        public void Transaction()
-        {
-            DB.BeginTransaction();
-
+            catch (InvalidCastException e)
+            {
+                Trace.WriteLine(e);
+                DB.Rollback();
+            }
             DB.Commit();
         }
 

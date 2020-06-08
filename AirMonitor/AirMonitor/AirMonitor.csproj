@@ -22,7 +22,6 @@
     <Folder Include="Styles\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Converters\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="MainPage.xaml" />

@@ -30,13 +30,15 @@ namespace AirMonitor.ViewModels
             IsBusy = true;
 
             var location = await GetLocation();
-            var installations = await GetInstallations(location, maxResults: 3);
-            var data = await GetMeasurementsForInstallations(installations);
-            Items = new List<Measurement>(data);
-            App.databaseHelper.SaveInstallation(installations);
-           
             
-
+            var installations = await GetInstallations(location, maxResults: 3);          
+            await App.databaseHelper.SaveInstallation(installations);
+            var inst = await App.databaseHelper.GetInstallations();
+            var data = await GetMeasurementsForInstallations(inst);
+            
+            App.databaseHelper.SaveMeasurements(data);           
+            Items = new List<Measurement>(data);
+         
             IsBusy = false;
         }
 
@@ -62,7 +64,7 @@ namespace AirMonitor.ViewModels
             set => SetProperty(ref _isBusy, value);
         }
 
-        private async Task<IEnumerable<Installation>> GetInstallations(Location location, double maxDistanceInKm = 50, int maxResults = -1)
+        private async Task<IEnumerable<Installation>> GetInstallations(Xamarin.Essentials.Location location, double maxDistanceInKm = 50, int maxResults = -1)
         {
             if (location == null)
             {
@@ -201,11 +203,11 @@ namespace AirMonitor.ViewModels
             return default;
         }
 
-        private async Task<Location> GetLocation()
+        private async Task<Xamarin.Essentials.Location> GetLocation()
         {
             try
             {
-                Location location = await Geolocation.GetLastKnownLocationAsync();
+                Xamarin.Essentials.Location location = await Geolocation.GetLastKnownLocationAsync();
 
                 if (location == null)
                 {

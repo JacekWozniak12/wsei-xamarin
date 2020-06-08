@@ -13,9 +13,12 @@ namespace AirMonitor.Models.Entities
         public int Current { get; set; }
         public int Installation { get; set; }
 
-        public MeasurementsEntity() 
+        public MeasurementsEntity() { }
+
+        public MeasurementsEntity(int current, int installation) 
         {
-            
+            Current = current;
+            Installation = installation;
         }
 
     }
