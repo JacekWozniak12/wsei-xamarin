@@ -22,7 +22,6 @@ namespace AirMonitor.ViewModels
         public HomeViewModel(INavigation navigation)
         {
             _navigation = navigation;
-
             Initialize();
         }
 
@@ -34,6 +33,9 @@ namespace AirMonitor.ViewModels
             var installations = await GetInstallations(location, maxResults: 3);
             var data = await GetMeasurementsForInstallations(installations);
             Items = new List<Measurement>(data);
+            App.databaseHelper.SaveInstallation(installations);
+           
+            
 
             IsBusy = false;
         }
@@ -60,7 +62,7 @@ namespace AirMonitor.ViewModels
             set => SetProperty(ref _isBusy, value);
         }
 
-        private async Task<IEnumerable<Installation>> GetInstallations(Location location, double maxDistanceInKm = 3, int maxResults = -1)
+        private async Task<IEnumerable<Installation>> GetInstallations(Location location, double maxDistanceInKm = 50, int maxResults = -1)
         {
             if (location == null)
             {

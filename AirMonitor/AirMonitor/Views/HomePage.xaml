@@ -9,7 +9,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextCell Text="{Binding Installation.Address.Description}"
-                              Detail="{Binding CurrentDisplayValue, StringFormat='CAQI: {0}'}"/>
+                              Detail="{Binding CurrentDisplayValue, StringFormat='CAQI: {0} \n Location: {1}'}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

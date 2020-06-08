@@ -16,17 +16,18 @@ namespace AirMonitor
         public static string AirlyApiMeasurementUrl { get; private set; }
         public static string AirlyApiInstallationUrl { get; private set; }
 
+        public static DatabaseHelper databaseHelper;
+
         public App()
         {
-            InitializeComponent();
-
+            InitializeComponent();          
             InitializeApp();
         }
 
         private async Task InitializeApp()
         {
+            Task.Run(() => databaseHelper = new DatabaseHelper());
             await LoadConfig();
-
             MainPage = new RootTabbedPage();
         }
 
@@ -35,6 +36,7 @@ namespace AirMonitor
             var assembly = Assembly.GetAssembly(typeof(App));
             var resourceNames = assembly.GetManifestResourceNames();
             var configName = resourceNames.FirstOrDefault(s => s.Contains("config.json"));
+            var secretsName = resourceNames.FirstOrDefault(s => s.Contains("secrets.json"));
             
             using (var stream = assembly.GetManifestResourceStream(configName))
             {
@@ -43,10 +45,19 @@ namespace AirMonitor
                     var json = await reader.ReadToEndAsync();
                     var dynamicJson = JObject.Parse(json);
 
-                    AirlyApiKey = dynamicJson["AirlyApiKey"].Value<string>();
                     AirlyApiUrl = dynamicJson["AirlyApiUrl"].Value<string>();
                     AirlyApiMeasurementUrl = dynamicJson["AirlyApiMeasurementUrl"].Value<string>();
                     AirlyApiInstallationUrl = dynamicJson["AirlyApiInstallationUrl"].Value<string>();
+                }
+            }
+            using (var stream = assembly.GetManifestResourceStream(secretsName))
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    var json = await reader.ReadToEndAsync();
+                    var dynamicJson = JObject.Parse(json);
+
+                    AirlyApiKey = dynamicJson["AirlyApiKey"].Value<string>();
                 }
             }
         }
