@@ -18,6 +18,32 @@ namespace AirMonitor.ViewModels
 {
     public class HomeViewModel : BaseViewModel
     {
+        public bool IsRefreshing
+        {
+            get { return _isRefreshing; }
+            set
+            {
+                SetProperty(ref _isRefreshing, value);
+            }
+        }
+
+        public ICommand RefreshCommand
+        {
+            get
+            {
+                return new Command(async () =>
+                {
+                    if (IsBusy) return;
+                    else
+                    {
+                        IsRefreshing = true;
+                        await GetData(forcedFromWeb: true);
+                        IsRefreshing = false;
+                    }
+                });
+            }
+        }
+
         private readonly INavigation _navigation;
 
         public HomeViewModel(INavigation navigation)
@@ -29,33 +55,42 @@ namespace AirMonitor.ViewModels
         private async Task Initialize()
         {
             IsBusy = true;
-            var location = await GetLocation();
-            var i = await App.databaseHelper.GetInstallations();
-            var m = await App.databaseHelper.GetMeasurements();          
+            await GetData();
+            IsBusy = false;
+        }
 
-            if (
-                await App.databaseHelper.CheckForUpdateRequest(m) && 
-                await IsLocationChanged(location, i))
+        private async Task GetData(bool forcedFromWeb = false)
+        {
+            var location = await GetLocation();
+            IEnumerable<Installation> i = null;
+            IEnumerable<Measurement> m = null;
+
+            m = await App.databaseHelper.GetMeasurements();
+            i = await App.databaseHelper.GetInstallations();
+
+            if (forcedFromWeb || m == null || i == null ||
+                await App.databaseHelper.CheckForUpdateRequest(m) ||
+                await IsLocationChangedOrNull(location, i))
             {
                 i = await GetInstallations(location, maxResults: 3);
                 m = await GetMeasurementsForInstallations(i);
             }
 
+            GetItems(m);
+
             Task.Run(() =>
-                {
-                    App.databaseHelper.SaveInstallation(i);
-                    App.databaseHelper.SaveMeasurements(m);
-                }
+            {
+                App.databaseHelper.SaveInstallation(i);
+                App.databaseHelper.SaveMeasurements(m);
+            }
             );
 
-            GetItems(m);
-            IsBusy = false;
         }
 
-        private static async Task<bool> IsLocationChanged(Xamarin.Essentials.Location location, IEnumerable<Installation> i)
+        private static async Task<bool> IsLocationChangedOrNull(Xamarin.Essentials.Location location, IEnumerable<Installation> i)
         {
             bool r = false;
-
+            if (i == null || location == null) return true;
             await Task.Run(() =>
             {
                 foreach (var e in i)
@@ -101,13 +136,16 @@ namespace AirMonitor.ViewModels
         }
 
         private bool _isBusy;
+        private bool _isRefreshing;
+
         public bool IsBusy
         {
             get => _isBusy;
             set => SetProperty(ref _isBusy, value);
         }
 
-        private async Task<IEnumerable<Installation>> GetInstallations(Xamarin.Essentials.Location location, double maxDistanceInKm = 50, int maxResults = -1)
+        private async Task<IEnumerable<Installation>> GetInstallations
+            (Xamarin.Essentials.Location location, double maxDistanceInKm = 50, int maxResults = -1)
         {
             if (location == null)
             {

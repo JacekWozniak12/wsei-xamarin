@@ -26,7 +26,7 @@ namespace AirMonitor
 
         private async Task InitializeApp()
         {
-            Task.Run(() => DatabaseHelperInitialize());
+            DatabaseHelperInitialize();
             await LoadConfig();
             MainPage = new RootTabbedPage();
         }

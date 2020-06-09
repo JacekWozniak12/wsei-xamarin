@@ -10,7 +10,6 @@ namespace AirMonitor.Models.Entities
     public class InstallationEntity
     {
         [PrimaryKey]
-        [AutoIncrement]
         public string Id { get; set; }
         public string Address { get; set; }
         public string Location { get; set; }

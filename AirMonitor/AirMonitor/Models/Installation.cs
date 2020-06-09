@@ -17,6 +17,8 @@ namespace AirMonitor.Models
                 JsonConvert.DeserializeObject<Address>(entity.Address);
         }
 
+        public Installation() { }
+
         public string Id { get; set; }
         public Xamarin.Essentials.Location Location { get; set; }
         public Address Address { get; set; }
