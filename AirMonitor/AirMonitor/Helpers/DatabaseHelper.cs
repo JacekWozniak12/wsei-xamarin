@@ -48,6 +48,7 @@ namespace AirMonitor
             catch (SQLiteException e)
             {
                 Console.WriteLine(e);
+                return;
             }
         }
 
@@ -66,6 +67,7 @@ namespace AirMonitor
             catch (SQLiteException e)
             {
                 Console.WriteLine(e);
+                return;
             }
         }
 
@@ -89,11 +91,19 @@ namespace AirMonitor
             {
                 Trace.WriteLine(e);
                 DB.Rollback();
+                return;
             }
             catch (InvalidCastException e)
             {
                 Trace.WriteLine(e);
                 DB.Rollback();
+                return;
+            }
+            catch (JsonReaderException e)
+            {
+                Console.WriteLine(e);
+                DB.Rollback();
+                return;
             }
             DB.Commit();        
         }
@@ -120,6 +130,13 @@ namespace AirMonitor
             {
                 Trace.WriteLine(e);
                 DB.Rollback();
+                return null;
+            }
+            catch (JsonReaderException e)
+            {
+                Console.WriteLine(e);
+                DB.Rollback();
+                return null;
             }
             return List;
         }          
@@ -137,24 +154,25 @@ namespace AirMonitor
             }
             catch (SQLiteException e)
             {
-                Item = null;
                 Trace.WriteLine(e);
                 DB.Rollback();
-                return Item;
+                return null;
+            }
+            catch (JsonReaderException e)
+            {
+                Console.WriteLine(e);
+                DB.Rollback();
+                return null;
             }
 
             return Item;
         }
 
-        public async Task<bool> CheckForUpdateRequest(IEnumerable<Measurement> toCheck)
+        public bool CheckForUpdateRequest(IEnumerable<Measurement> toCheck)
         {
             var currentData = DateTime.UtcNow;
             if (toCheck == null || toCheck.Count() == 0) return true;
-
-            return await new Task<bool>(() =>
-            {
-                return toCheck.Any(x => x.Current.TillDateTime - currentData > new TimeSpan(1, 0, 0));
-            });
+            return toCheck.Any(x => x.Current.TillDateTime - currentData > new TimeSpan(1, 0, 0));
         }
 
         public async Task<IEnumerable<Measurement>> GetMeasurements()
@@ -188,10 +206,15 @@ namespace AirMonitor
             }
             catch (SQLiteException e)
             {
-                List = null;
                 Trace.WriteLine(e);
                 DB.Rollback();
-                return List;
+                return null;
+            }
+            catch (JsonReaderException e)
+            {
+                Console.WriteLine(e);
+                DB.Rollback();
+                return null;
             }
 
             return List;
@@ -205,36 +228,20 @@ namespace AirMonitor
                 Console.WriteLine("-----GETTING ENTITY:{0}----", Entity.Id);
                 var mie = DB.Query<MeasurementItemEntity>
                  ("SELECT * FROM MeasurementItemEntity WHERE Id = ?", Entity.Current)?.FirstOrDefault();
-
-                var mieVs = JsonConvert.DeserializeObject<int[]>(mie.Values);
-                var mieIs = JsonConvert.DeserializeObject<int[]>(mie.Indexes);
-                var mieSs = JsonConvert.DeserializeObject<int[]>(mie.Standards);
-
-                List<AirQualityIndex> aqie = new List<AirQualityIndex>();
-                List<MeasurementValue> mve = new List<MeasurementValue>();
-                List<AirQualityStandard> aqse = new List<AirQualityStandard>();
+                
                 Console.WriteLine("-----GOT ENTITY:{0}----", Entity.Id);
-                foreach (var mieV in mieVs)
-                {
-                    mve = DB.Query<MeasurementValue>("SELECT * FROM MeasurementValue WHERE Id = ?", mieV);
-                }
-
-                foreach (var mieI in mieIs)
-                {
-                    aqie = DB.Query<AirQualityIndex>("SELECT * FROM AirQualityIndex WHERE Id = ?", mieI);
-                }
-
-                foreach (var mieS in mieSs)
-                {
-                    aqse = DB.Query<AirQualityStandard>("SELECT * FROM AirQualityStandard WHERE Id = ?", mieS);
-                }
+                var mieVs = JsonConvert.DeserializeObject<List<MeasurementValue>>(mie.Values);
+                var mieIs = JsonConvert.DeserializeObject<List<AirQualityIndex>>(mie.Indexes);
+                var mieSs = JsonConvert.DeserializeObject<List<AirQualityStandard>>(mie.Standards);
+                
                 Console.WriteLine("-----GOT DATA:{0}----", Entity.Id);
                 mi = new MeasurementItem();
-                mi.Indexes = aqie.ToArray();
-                mi.Standards = aqse.ToArray();
-                mi.Values = mve.ToArray();
+                mi.Indexes = mieIs.ToArray();
+                mi.Standards = mieSs.ToArray();
+                mi.Values = mieVs.ToArray();
                 mi.FromDateTime = mie.FromDateTime;
                 mi.FromDateTime = mie.TillDateTime;
+                
                 Console.WriteLine("-----CREATED ITEM:{0}----", Entity.Id);
             }
             catch (SQLiteException e)

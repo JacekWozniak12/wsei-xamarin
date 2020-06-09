@@ -62,54 +62,52 @@ namespace AirMonitor.ViewModels
         private async Task GetData(bool forcedFromWeb = false)
         {
             var location = await GetLocation();
-            IEnumerable<Installation> i = null;
-            IEnumerable<Measurement> m = null;
-
-            m = await App.databaseHelper.GetMeasurements();
-            i = await App.databaseHelper.GetInstallations();
+            IEnumerable<Measurement> m = await App.databaseHelper.GetMeasurements();
+            IEnumerable<Installation> i = await App.databaseHelper.GetInstallations();
 
             if (forcedFromWeb || m == null || i == null ||
-                await App.databaseHelper.CheckForUpdateRequest(m) ||
-                await IsLocationChangedOrNull(location, i))
+                App.databaseHelper.CheckForUpdateRequest(m) ||
+                IsLocationChangedOrNull(location, i))
             {
+                Console.WriteLine("--GETTING DATA FROM API--");
                 i = await GetInstallations(location, maxResults: 3);
                 m = await GetMeasurementsForInstallations(i);
+                if(i != null && m != null) SaveData(i, m);
             }
 
-            GetItems(m);
+            if(i != null && m != null) GetItems(m);
+        }
 
-            Task.Run(() =>
+        private static Task SaveData(IEnumerable<Installation> i, IEnumerable<Measurement> m)
+        {
+            return Task.Run(() =>
             {
                 App.databaseHelper.SaveInstallation(i);
                 App.databaseHelper.SaveMeasurements(m);
             }
             );
-
         }
 
-        private static async Task<bool> IsLocationChangedOrNull(Xamarin.Essentials.Location location, IEnumerable<Installation> i)
+        private static bool IsLocationChangedOrNull(Xamarin.Essentials.Location location, IEnumerable<Installation> i)
         {
             bool r = false;
             if (i == null || location == null) return true;
-            await Task.Run(() =>
+            foreach (var e in i)
             {
-                foreach (var e in i)
+                if (
+                    Math.Round(e.Location.Latitude, 3)
+                    !=
+                    Math.Round(location.Latitude, 3)
+                    &&
+                    Math.Round(e.Location.Longitude, 3)
+                    !=
+                    Math.Round(location.Longitude, 3)
+                    )
                 {
-                    if (
-                        Math.Round(e.Location.Latitude, 2)
-                        !=
-                        Math.Round(location.Latitude, 2)
-                        &&
-                        Math.Round(e.Location.Longitude, 2)
-                        !=
-                        Math.Round(location.Longitude, 2)
-                        )
-                    {
-                        r = true;
-                        break;
-                    }
-                };
-            });
+                    r = true;
+                    break;
+                }
+            };
             return r;
         }
 
