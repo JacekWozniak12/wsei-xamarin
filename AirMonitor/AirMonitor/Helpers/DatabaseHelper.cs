@@ -1,5 +1,6 @@
 ﻿using AirMonitor.Models;
 using AirMonitor.Models.Entities;
+using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,6 @@ namespace AirMonitor
 
         SQLiteConnection DB { get; set; }
 
-        public DateTime TillDateTime;
 
         public DatabaseHelper()
         {
@@ -125,6 +125,118 @@ namespace AirMonitor
             return List;
         }
 
+        public async Task<MeasurementItem> GetMeasurementItem()
+        {
+            MeasurementItem Item = null;
+            await new Task(
+            () =>
+            {
+                try
+                {
+                    DB.BeginTransaction();
+                    var Entity = DB.Table<MeasurementsEntity>().FirstOrDefault();
+                    Item = GetMeasurementItem(Entity);
+                    DB.Commit();
+                }
+                catch (SQLiteException e)
+                {
+                    Item = null;
+                    Trace.WriteLine(e);
+                    DB.Rollback();
+                }
+            }
+            );
+            return Item;
+        }
+
+        public async Task<bool> CheckForUpdateRequest(IEnumerable<Measurement> toCheck)
+        {
+            var currentData = DateTime.UtcNow;
+
+            return await new Task<bool>(() =>
+            {
+                return toCheck.Any(x => x.Current.TillDateTime - currentData > new TimeSpan(1, 0, 0));
+            });
+        }
+
+        public async Task<IEnumerable<Measurement>> GetMeasurements()
+        {
+            var List = new List<Measurement>();
+            await new Task(
+            () =>
+            {
+                try
+                {
+                    var MeasurementItemList = new List<MeasurementItem>();
+                    DB.BeginTransaction();
+                    var Table = DB.Table<MeasurementsEntity>();
+                    
+                    foreach (var Entity in Table)
+                    {
+                        var ie = DB.Query<InstallationEntity>
+                            ("SELECT * FROM Id WHERE Id = ?", Entity.Installation)?.FirstOrDefault();
+                        var i = new Installation(ie);
+
+                        MeasurementItem mi = GetMeasurementItem(Entity);
+                        MeasurementItemList.Add(mi);
+
+                        var m = new Measurement();
+                        m.Current = mi;
+                        m.Installation = i;
+
+                        List.Add(m);
+                    }
+                    DB.Commit();
+                }
+                catch (SQLiteException e)
+                {
+                    List = null;
+                    Trace.WriteLine(e);
+                    DB.Rollback();
+                }
+            }
+            );
+
+            return List;
+        }
+
+        private MeasurementItem GetMeasurementItem(MeasurementsEntity Entity)
+        {
+            var mie = DB.Query<MeasurementItemEntity>
+             ("SELECT * FROM Id WHERE Id = ?", Entity.Current)?.FirstOrDefault();
+
+            var mieVs = JsonConvert.DeserializeObject<int[]>(mie.Values);
+            var mieIs = JsonConvert.DeserializeObject<int[]>(mie.Indexes);
+            var mieSs = JsonConvert.DeserializeObject<int[]>(mie.Standards);
+
+            List<AirQualityIndex> aqie = new List<AirQualityIndex>();
+            List<MeasurementValue> mve = new List<MeasurementValue>();
+            List<AirQualityStandard> aqse = new List<AirQualityStandard>();
+
+            foreach (var mieV in mieVs)
+            {
+                mve = DB.Query<MeasurementValue>("SELECT * FROM Id WHERE Id = ?", mieV);
+            }
+
+            foreach (var mieI in mieIs)
+            {
+                aqie = DB.Query<AirQualityIndex>("SELECT * FROM Id WHERE Id = ?", mieI);
+            }
+
+            foreach (var mieS in mieSs)
+            {
+                aqse = DB.Query<AirQualityStandard>("SELECT * FROM Id WHERE Id = ?", mieS);
+            }
+
+            var mi = new MeasurementItem();
+            mi.Indexes = aqie.ToArray();
+            mi.Standards = aqse.ToArray();
+            mi.Values = mve.ToArray();
+            mi.FromDateTime = mie.FromDateTime;
+            mi.FromDateTime = mie.TillDateTime;
+            return mi;
+        }
+
         public void SaveMeasurements(IEnumerable<Measurement> measurements)
         {
             DB.BeginTransaction();
@@ -162,6 +274,7 @@ namespace AirMonitor
 
         public void Dispose()
         {
+            DB.Dispose();
             DB = null;
         }
     }

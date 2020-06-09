@@ -12,6 +12,7 @@ using Xamarin.Forms;
 using Xamarin.Essentials;
 using System.Globalization;
 using System.Web;
+using Xamarin.Forms.Internals;
 
 namespace AirMonitor.ViewModels
 {
@@ -28,18 +29,60 @@ namespace AirMonitor.ViewModels
         private async Task Initialize()
         {
             IsBusy = true;
-
             var location = await GetLocation();
-            
-            var installations = await GetInstallations(location, maxResults: 3);          
-            await App.databaseHelper.SaveInstallation(installations);
-            var inst = await App.databaseHelper.GetInstallations();
-            var data = await GetMeasurementsForInstallations(inst);
-            
-            App.databaseHelper.SaveMeasurements(data);           
-            Items = new List<Measurement>(data);
-         
+            var i = await App.databaseHelper.GetInstallations();
+            var m = await App.databaseHelper.GetMeasurements();          
+
+            if (
+                await App.databaseHelper.CheckForUpdateRequest(m) && 
+                await IsLocationChanged(location, i))
+            {
+                i = await GetInstallations(location, maxResults: 3);
+                m = await GetMeasurementsForInstallations(i);
+            }
+
+            Task.Run(() =>
+                {
+                    App.databaseHelper.SaveInstallation(i);
+                    App.databaseHelper.SaveMeasurements(m);
+                }
+            );
+
+            GetItems(m);
             IsBusy = false;
+        }
+
+        private static async Task<bool> IsLocationChanged(Xamarin.Essentials.Location location, IEnumerable<Installation> i)
+        {
+            bool r = false;
+
+            await Task.Run(() =>
+            {
+                foreach (var e in i)
+                {
+                    if (
+                        Math.Round(e.Location.Latitude, 2)
+                        !=
+                        Math.Round(location.Latitude, 2)
+                        &&
+                        Math.Round(e.Location.Longitude, 2)
+                        !=
+                        Math.Round(location.Longitude, 2)
+                        )
+                    {
+                        r = true;
+                        break;
+                    }
+                };
+            });
+            return r;
+        }
+
+        public void GetItems(
+            IEnumerable<Measurement> measurements
+            )
+        {
+            Items = new List<Measurement>(measurements);
         }
 
         private ICommand _goToDetailsCommand;

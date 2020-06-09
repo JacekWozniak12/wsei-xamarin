@@ -26,7 +26,7 @@ namespace AirMonitor
 
         private async Task InitializeApp()
         {
-            Task.Run(() => databaseHelper = new DatabaseHelper());
+            Task.Run(() => DatabaseHelperInitialize());
             await LoadConfig();
             MainPage = new RootTabbedPage();
         }
@@ -64,14 +64,31 @@ namespace AirMonitor
 
         protected override void OnStart()
         {
+            DatabaseHelperInitialize();
+        }
+
+        private void DatabaseHelperInitialize()
+        {
+            if(databaseHelper == null)
+            {
+                databaseHelper = new DatabaseHelper();
+            }
         }
 
         protected override void OnSleep()
         {
+            DisposeDatabaseHelper();
+        }
+
+        private static void DisposeDatabaseHelper()
+        {
+            databaseHelper.Dispose();
+            databaseHelper = null;
         }
 
         protected override void OnResume()
         {
+            DatabaseHelperInitialize();
         }
     }
 }
