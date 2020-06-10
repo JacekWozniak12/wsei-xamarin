@@ -2,28 +2,24 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AirMonitor.Views.HomePage"
+             xmlns:models="clr-namespace:AirMonitor.Models"
              Title="Home Page">
-
     <Grid>
-        <ListView ItemsSource="{Binding Items}" ItemTapped="ListView_ItemTapped" SelectionMode="None">
+        <ListView 
+            ItemsSource="{Binding Items}" 
+            ItemTapped="ListView_ItemTapped" 
+            SelectionMode="None"
+            IsPullToRefreshEnabled="True"
+            RefreshCommand="{Binding RefreshCommand}"
+            IsRefreshing="{Binding IsRefreshing}"
+            >
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Text="{Binding Installation.Address.City}"
+                    <TextCell Text="{Binding Installation.Address.Description}"
                               Detail="{Binding CurrentDisplayValue, StringFormat='CAQI: {0}'}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center"/>
     </Grid>
-    
-    
-    <!--
-    <Button
-        Text="Go to details"
-        HorizontalOptions="Center"
-        VerticalOptions="Center"
-        Command="{Binding GoToDetailsCommand}"
-        />
-    -->
-    
 </ContentPage>

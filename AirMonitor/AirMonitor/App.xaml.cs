@@ -6,38 +6,38 @@ using System.Threading.Tasks;
 using AirMonitor.Views;
 using Newtonsoft.Json.Linq;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace AirMonitor
 {
     public partial class App : Application
     {
+        public static string AirlyApiKey { get; private set; }
+        public static string AirlyApiUrl { get; private set; }
+        public static string AirlyApiMeasurementUrl { get; private set; }
+        public static string AirlyApiInstallationUrl { get; private set; }
+
+        public static DatabaseHelper databaseHelper;
+
         public App()
         {
-            InitializeComponent();
+            InitializeComponent();          
             InitializeApp();
+        }
+
+        private async Task InitializeApp()
+        {
+            DatabaseHelperInitialize();
+            await LoadConfig();
             MainPage = new RootTabbedPage();
         }
 
-        private async void InitializeApp()
-        {
-            await LoadConfig();
-        }
-
-        public static string AirlyApiKey;
-        public static string AirlyApiUrl;
-        public static string AirlyApiMeasurementUrl;
-        public static string AirlyApiInstallationUrl;
-
-
-        private async Task LoadConfig()
+        private static async Task LoadConfig()
         {
             var assembly = Assembly.GetAssembly(typeof(App));
             var resourceNames = assembly.GetManifestResourceNames();
             var configName = resourceNames.FirstOrDefault(s => s.Contains("config.json"));
-            var secretName = resourceNames.FirstOrDefault(s => s.Contains("secret.json"));
-
-            // get api vars from config.json
+            var secretsName = resourceNames.FirstOrDefault(s => s.Contains("secrets.json"));
+            
             using (var stream = assembly.GetManifestResourceStream(configName))
             {
                 using (var reader = new StreamReader(stream))
@@ -50,8 +50,7 @@ namespace AirMonitor
                     AirlyApiInstallationUrl = dynamicJson["AirlyApiInstallationUrl"].Value<string>();
                 }
             }
-            // get api key from secret.json
-            using (var stream = assembly.GetManifestResourceStream(secretName))
+            using (var stream = assembly.GetManifestResourceStream(secretsName))
             {
                 using (var reader = new StreamReader(stream))
                 {
@@ -65,14 +64,31 @@ namespace AirMonitor
 
         protected override void OnStart()
         {
+            DatabaseHelperInitialize();
+        }
+
+        private void DatabaseHelperInitialize()
+        {
+            if(databaseHelper == null)
+            {
+                databaseHelper = new DatabaseHelper();
+            }
         }
 
         protected override void OnSleep()
         {
+            DisposeDatabaseHelper();
+        }
+
+        private static void DisposeDatabaseHelper()
+        {
+            databaseHelper.Dispose();
+            databaseHelper = null;
         }
 
         protected override void OnResume()
         {
+            DatabaseHelperInitialize();
         }
     }
 }

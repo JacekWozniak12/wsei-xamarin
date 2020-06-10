@@ -1,23 +1,18 @@
-﻿using AirMonitor.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using AirMonitor.Models;
 
 namespace AirMonitor.ViewModels
 {
-    public class DetailsViewModel : BaseViewModel, INotifyPropertyChanged
+    public class DetailsViewModel : BaseViewModel
     {
-
         public DetailsViewModel()
         {
-
         }
 
-        private Measurements _item;
-        public Measurements Item
+        private Measurement _item;
+        public Measurement Item
         {
             get => _item;
             set
@@ -41,7 +36,7 @@ namespace AirMonitor.ViewModels
             CaqiDescription = index.Advice;
             Pm25Value = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "PM25")?.Value ?? 0);
             Pm10Value = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "PM10")?.Value ?? 0);
-            HumidityValue = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "HUMIDITY")?.Value ?? 0);
+            HumidityPercent = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "HUMIDITY")?.Value ?? 0);
             PressureValue = (int)Math.Round(values?.FirstOrDefault(s => s.Name == "PRESSURE")?.Value ?? 0);
             Pm25Percent = (int)Math.Round(standards?.FirstOrDefault(s => s.Pollutant == "PM25")?.Percent ?? 0);
             Pm10Percent = (int)Math.Round(standards?.FirstOrDefault(s => s.Pollutant == "PM10")?.Percent ?? 0);
@@ -52,6 +47,15 @@ namespace AirMonitor.ViewModels
         {
             get => _caqiValue;
             set => SetProperty(ref _caqiValue, value);
+            /* SetProperty is a helper function to shorten our code. This is equivalent of:
+             * set
+             * {
+             *  if (_caqiValue == value) return; // Don't reassign value and notify view if value didn't change
+             *
+             *  _caqiValue = value;
+             *  RaisePropertyChanged();
+             * }
+             */
         }
 
         private string _caqiTitle = "Świetna jakość!";
@@ -96,11 +100,11 @@ namespace AirMonitor.ViewModels
             set => SetProperty(ref _pm10Percent, value);
         }
 
-        private double _humidityValue = 0.95;
-        public double HumidityValue
+        private int _humidityPercent = 29;
+        public int HumidityPercent
         {
-            get => _humidityValue;
-            set => SetProperty(ref _humidityValue, value);
+            get => _humidityPercent;
+            set => SetProperty(ref _humidityPercent, value);
         }
 
         private int _pressureValue = 1027;

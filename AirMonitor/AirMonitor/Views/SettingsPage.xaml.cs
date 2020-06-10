@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Xamarin.Essentials;
+
 using Xamarin.Forms;
 
 namespace AirMonitor.Views
@@ -10,7 +10,6 @@ namespace AirMonitor.Views
         public SettingsPage()
         {
             InitializeComponent();
-            
         }
     }
 }

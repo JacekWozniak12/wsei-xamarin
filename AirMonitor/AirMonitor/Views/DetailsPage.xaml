@@ -15,7 +15,7 @@
     </ContentPage.BindingContext>
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:ValueToPercentConverter x:Key="ValueToPercent"/>
+            <converters:PercentToValueConverter x:Key="PercentToValue"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -27,7 +27,7 @@
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span
-                                    Text="{Binding CaqiValue}" 
+                                    Text="{Binding CaqiValue}"
                                     Style="{StaticResource CaqiValueSpanStyle}"/>
                                 <Span
                                     Text="{x:Static x:Environment.NewLine}"/>
@@ -62,7 +62,7 @@
                                             Text="{Binding Pm25Value}"
                                             Style="{StaticResource NormalTextSpanStyle}"/>
                                         <Span
-                                            Text=" mg/m3 "
+                                            Text=" µg/m³ "
                                             Style="{StaticResource SmallTextSpanStyle}"/>
                                         <Span
                                             Text="{Binding Pm25Percent, StringFormat='({0}%)'}"
@@ -89,7 +89,7 @@
                                             Text="{Binding Pm10Value}"
                                             Style="{StaticResource NormalTextSpanStyle}"/>
                                         <Span
-                                            Text=" mg/m3 "
+                                            Text=" µg/m³ "
                                             Style="{StaticResource SmallTextSpanStyle}"/>
                                         <Span
                                             Text="{Binding Pm10Percent, StringFormat='({0}%)'}"
@@ -107,10 +107,10 @@
                     <controls:ContentWithHeader.ControlContent>
                         <StackLayout>
                             <Label
-                                Text="{Binding HumidityValue, Converter={StaticResource ValueToPercent}, StringFormat='{0}%'}"
+                                Text="{Binding HumidityPercent, StringFormat='{0}%'}"
                                 Style="{StaticResource NormalTextLabelStyle}"/>
                             <Slider
-                                Value="{Binding HumidityValue}"
+                                Value="{Binding HumidityPercent, Converter={StaticResource PercentToValue}, Mode=OneWay}"
                                 Style="{StaticResource SliderStyle}"/>
                         </StackLayout>
                     </controls:ContentWithHeader.ControlContent>
@@ -127,7 +127,7 @@
                             <Slider
                                 Maximum="1100"
                                 Minimum="900"
-                                Value="1026"
+                                Value="{Binding PressureValue}"
                                 Style="{StaticResource SliderStyle}"/>
                         </StackLayout>
                     </controls:ContentWithHeader.ControlContent>

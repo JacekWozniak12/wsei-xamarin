@@ -193,5 +193,4 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 .vscode/settings.json
-
-secret.json
+secrets.json

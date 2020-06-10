@@ -14,5 +14,10 @@
         <x:Arguments>
             <views:SettingsPage/>
         </x:Arguments>
+    </NavigationPage>    
+    <NavigationPage Title="Map" IconImageSource="baseline_map_black_24">
+        <x:Arguments>
+            <views:MapPage/>
+        </x:Arguments>
     </NavigationPage>
 </TabbedPage>
